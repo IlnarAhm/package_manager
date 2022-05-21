@@ -6,21 +6,31 @@ namespace Ilnarahm\Packagemanager;
 
 class File
 {
+    /**
+     * @var String
+     */
     private $path;
 
-    public function __construct($filePath) {
+    /**
+     * File constructor.
+     * @param $filePath
+     */
+    public function __construct(String $filePath) {
         $this->path = $filePath;
     }
 
-    public function getPath() {
+    public function getPath(): string
+    {
         return $this->path;
     }
 
-    public function getName() {
+    public function getName(): string
+    {
         return basename($this->path);
     }
 
-    public function getSize() {
+    public function getSize(): int
+    {
         return filesize($this->path);
     }
 }

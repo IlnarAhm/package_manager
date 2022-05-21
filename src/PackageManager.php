@@ -94,17 +94,4 @@ class PackageManager
         return ($averageFilesSize / count($this->files)) * 3;
     }
 
-    // TODO: УДАЛИТЬ ЭТОТ МЕТОД
-    public function logger(): void
-    {
-        echo '<h1>Допустимый вес пакета: ' . $this->allowedPackageSize . ' байт</h1><br/>';
-
-        foreach ($this->packages as $package) {
-            echo '<pre>';
-            $package->printPackageInfo();
-            echo '</pre>';
-            echo '<hr>';
-        }
-    }
-
 }

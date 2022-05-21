@@ -1,10 +1,10 @@
 <?php
 
-
 namespace Ilnarahm\Packagemanager;
 
-
 use Exception;
+use ZipArchive;
+
 
 class Package
 {
@@ -19,10 +19,25 @@ class Package
     private $packagePath;
 
     /**
+     * @var int
+     */
+    private $packageSize;
+
+    /**
      * @var File[]
      */
     private $files;
 
+    /**
+     * @var Archive
+     */
+    private $archive;
+
+    /**
+     * Package constructor.
+     * @param String $name
+     * @param String $path
+     */
     public function __construct(String $name, String $path)
     {
         $this->packageName = $name;
@@ -41,42 +56,23 @@ class Package
         }
 
         foreach ($this->files as $file) {
+            $this->packageSize += $file->getSize();
             copy($file->getPath(), $this->packagePath . '/' . $file->getName());
         }
 
-        $this->createArchive();
+        $this->archive = new Archive($this->packagePath . '/' . $this->packageName, $this->files);
+        $this->archive->createZipArchive();
+
+        TextFile::create($this->packagePath, $this->getPackageInfo());
     }
 
-    private function createArchive(): void
+    private function getPackageInfo(): string
     {
-        var_dump($this->packagePath);
-        $zip = new ZipArchive(); //Создаём объект для работы с ZIP-архивами
-        $zip->open($this->packagePath . "/" . $this->packageName . ".zip", ZIPARCHIVE::CREATE); //Открываем (создаём)
-        // архив
-        // archive.zip
-        $zip->addFile("index.php"); //Добавляем в архив файл index.php
-        $zip->addFile("styles/style.css"); //Добавляем в архив файл styles/style.css
-        $zip->close(); //Завершаем работу с архивом
+        $text = "Размер пакета: " . $this->packageSize . " байт\n";
+        $text .= "Размер архива: " . $this->archive->getArchiveSize() . " байт\n";
+        $text .= "Сэкономили при сжатии: " . $this->packageSize - $this->archive->getArchiveSize() . " байт\n";
+
+        return $text;
     }
 
-    public function getPackageName(): string
-    {
-        return $this->packageName;
-    }
-
-
-
-    // TODO: УДАЛИТЬ ЭТОТ МЕТОД
-    public function printPackageInfo()
-    {
-        $size = 0;
-        echo '<b>Пакет:</b> ' . $this->getPackageName() . '<br/>';
-        echo '<b>Файлы:</b><ul>';
-        foreach ($this->files as $key => $file) {
-            $size += $file->getSize();
-            echo '<li>' . basename($file->getPath()) . ' ' . $file->getSize() . ' байт </li>';
-        }
-
-        echo '</ul><b>Вес пакета:</b>' . $size . ' байт';
-    }
 }

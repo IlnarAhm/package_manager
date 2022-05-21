@@ -13,11 +13,14 @@
 $packageManager = new PackageManager();
 ```
 
-Чтобы запустить процесс создания пакетов, небходимо вызвать метод createPackages(), и передать в него массив с файлами:
+Чтобы запустить процесс создания пакетов, небходимо вызвать метод createPackages(), передать в него массив с файлами 
+и путь, где нужно создать пакеты:
 
 ```php
 $packageManager->createPackages(['/file.doc', '/file2.doc'], '/packages');
 ```
+
+## Пример
 
 Пример  использования класса PackageManager:
 
@@ -43,4 +46,35 @@ try {
 } catch (Exception $exception) {
     echo $exception->getMessage();
 }
+```
+
+В итоге получим такую структуру файлов:
+
+```
+files/
+    file1.png
+    file2.png
+    file3.png
+    file4.png
+    file5.png
+packages/
+    package_1/
+        file1.png
+        file2.png
+        info.txt
+        package_1.zip
+    package_2/
+        file3.png
+        file4.png
+        file5.png
+        info.txt
+        package_1.zip
+```
+
+Содержимое текстового файла info.txt:
+
+```text
+Размер пакета: 248817 байт
+Размер архива: 211142 байт
+Сэкономили при сжатии: 37675 байт
 ```
