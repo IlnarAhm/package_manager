@@ -11,5 +11,8 @@
             "email": "ilnar.ahma@yandex.ru"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=7.1.0",
+        "ext-zip": "*"
+    }
 }
