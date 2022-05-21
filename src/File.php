@@ -16,16 +16,11 @@ class File
         return $this->path;
     }
 
-    public function getExt() {
-        return pathinfo($this->path, PATHINFO_EXTENSION);
+    public function getName() {
+        return basename($this->path);
     }
 
     public function getSize() {
         return filesize($this->path);
     }
-
-    public function copy($copyPath) {}
-    public function delete() {}
-    public function rename($newName) {}
-    public function replace($newPath) {}
 }

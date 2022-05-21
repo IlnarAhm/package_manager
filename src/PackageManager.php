@@ -18,16 +18,29 @@ class PackageManager
     private $packages = [];
 
     /**
+     * @var string
+     */
+    private $packagesPath;
+
+    /**
      * @var int
      */
     private $allowedPackageSize;
 
     /**
      * @param array $files
+     * @param string $packagesPath
      * @throws Exception
      */
-    public function createPackages(Array $files): void
+    public function createPackages(Array $files, String $packagesPath): void
     {
+        if(!file_exists($packagesPath)) {
+            if(!mkdir($packagesPath, 0755, true)) {
+                throw new Exception("Произошла ошибка при создании пути для пакетов");
+            }
+        }
+        $this->packagesPath = $packagesPath;
+
         foreach ($files as $file) {
             if (file_exists($file)) {
                 $this->files[] = new File($file);
@@ -36,16 +49,17 @@ class PackageManager
             }
         }
 
-        $this->init();
+        $this->initPackages();
+        $this->createPackageFolders();
     }
 
-    private function init(): void
+    private function initPackages(): void
     {
         $this->allowedPackageSize = $this->getAllowedPackageSize();
 
         // Разбиваем файлы на пакеты
         do {
-            $package = new Package("package_" . (count($this->packages) + 1));
+            $package = new Package("package_" . (count($this->packages) + 1), $this->packagesPath);
             $this->packages[] = $package;
 
             $sizeCounter = 0;
@@ -61,8 +75,13 @@ class PackageManager
             }
 
         } while (count($this->files));
+    }
 
-        //
+    private function createPackageFolders(): void
+    {
+        foreach ($this->packages as $package) {
+            $package->createPackageFolder();
+        }
     }
 
     private function getAllowedPackageSize(): float
@@ -72,18 +91,17 @@ class PackageManager
             $averageFilesSize += $file->getSize();
         }
 
-        return ($averageFilesSize/count($this->files)) * 3;
+        return ($averageFilesSize / count($this->files)) * 3;
     }
 
     // TODO: УДАЛИТЬ ЭТОТ МЕТОД
-    public function logger()
+    public function logger(): void
     {
         echo '<h1>Допустимый вес пакета: ' . $this->allowedPackageSize . ' байт</h1><br/>';
 
         foreach ($this->packages as $package) {
             echo '<pre>';
-            echo '<b>Пакет:</b> ' . $package->getPackageName() . '<br/>';
-            $package->getFileNames();
+            $package->printPackageInfo();
             echo '</pre>';
             echo '<hr>';
         }
