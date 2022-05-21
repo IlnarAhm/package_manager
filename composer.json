@@ -1,0 +1,15 @@
+{
+    "name": "ilnarahm/packagemanager",
+    "autoload": {
+        "psr-4": {
+            "Ilnarahm\\Packagemanager\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ilnar Akhmadiev",
+            "email": "ilnar.ahma@yandex.ru"
+        }
+    ],
+    "require": {}
+}
