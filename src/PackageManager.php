@@ -56,17 +56,18 @@ class PackageManager
     private function initPackages(): void
     {
         $this->allowedPackageSize = $this->getAllowedPackageSize();
-
         // Разбиваем файлы на пакеты
         do {
             $package = new Package("package_" . (count($this->packages) + 1), $this->packagesPath);
             $this->packages[] = $package;
 
+            $package->addFile(array_shift($this->files));
+
             $sizeCounter = 0;
             foreach ($this->files as $key => $file) {
                 $sizeCounter += $file->getSize();
 
-                if ($sizeCounter < $this->allowedPackageSize) {
+                if ($sizeCounter < ($this->allowedPackageSize)) {
                     $package->addFile($file);
                     unset($this->files[$key]);
                 } else {
